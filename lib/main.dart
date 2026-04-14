@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:learning_gamification/core/controllers/gem_controller.dart';
 import 'package:learning_gamification/features/home/home_screen.dart';
+import 'package:learning_gamification/features/splash/splash_screen.dart';
 import 'package:learning_gamification/features/shop/shop_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
@@ -47,8 +48,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MEMSNAP',
       theme: theme,
-      initialRoute: '/',
+      initialRoute: '/splash',
       routes: {
+        '/splash': (_) => const SplashScreen(),
         '/': (_) => const HomeScreen(),
         '/shop': (_) => const ShopScreen(),
       },
