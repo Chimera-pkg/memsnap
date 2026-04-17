@@ -41,6 +41,12 @@ class HomeScreen extends StatelessWidget {
             width: iconSize * scale,
             height: iconSize * scale,
             fit: BoxFit.contain,
+            errorBuilder: (ctx, err, st) => Image.asset(
+              'assets/dummy.png',
+              width: iconSize * scale,
+              height: iconSize * scale,
+              fit: BoxFit.contain,
+            ),
           ),
         ),
         const SizedBox(height: 6),
@@ -97,6 +103,18 @@ class HomeScreen extends StatelessWidget {
                                     (assetScales['assets/diamondbank.png'] ??
                                         1.0),
                                 fit: BoxFit.contain,
+                                errorBuilder: (ctx, err, st) => Image.asset(
+                                  'assets/dummy.png',
+                                  width:
+                                      headerIconSize *
+                                      (assetScales['assets/diamondbank.png'] ??
+                                          1.0),
+                                  height:
+                                      headerIconSize *
+                                      (assetScales['assets/diamondbank.png'] ??
+                                          1.0),
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                               Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -123,8 +141,13 @@ class HomeScreen extends StatelessWidget {
                           context: context,
                           builder: (_) => AlertDialog(
                             title: const Text('Help'),
-                            content: const Text(
-                              'Help and tips will appear here.',
+                            content: Image.asset(
+                              'assets/help_c.png',
+                              width:
+                                  headerIconSize *
+                                  (assetScales['assets/help.png'] ?? 1.0) *
+                                  1.6,
+                              fit: BoxFit.contain,
                             ),
                             actions: [
                               TextButton(
@@ -171,33 +194,76 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-
-                // Navigation row: Shop, Choose Language, Daily Gift
+                // row 3: shop, help, daily gift (duplicate for better spacing)
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment
+                      .spaceEvenly, // Mengatur jarak horizontal agar rapi
                   children: [
-                    _navItem(context, 'assets/shop.png', 'Shop', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ShopScreen()),
-                      );
-                    }, iconSize: navIconSize),
-                    _navItem(context, 'assets/language2.png', 'Choose', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ChooseLanguageScreen(),
+                    // 1. TOMBOL KIRI (Misal: Shop) - Posisi standar / Sedikit ke bawah
+                    Transform.translate(
+                      offset: const Offset(0, 15), // Geser ke bawah 15 pixel
+                      child: PressableIcon(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ShopScreen()),
                         ),
-                      );
-                    }, iconSize: navIconSize),
-                    _navItem(context, 'assets/dailygift.png', 'Daily', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const DailyGiftScreen(),
+                        child: Image.asset(
+                          'assets/shop.png',
+                          width:
+                              headerIconSize *
+                              (assetScales['assets/shop.png'] ?? 1.0),
+                          height:
+                              headerIconSize *
+                              (assetScales['assets/shop.png'] ?? 1.0),
                         ),
-                      );
-                    }, iconSize: navIconSize),
+                      ),
+                    ),
+
+                    // 2. TOMBOL TENGAH (Misal: Language) - Posisinya dinaikkan
+                    Transform.translate(
+                      offset: const Offset(
+                        0,
+                        -25,
+                      ), // Geser ke ATAS 25 pixel (Membentuk formasi segitiga/melengkung)
+                      child: PressableIcon(
+                        onTap: () {
+                          // Logika Language...
+                        },
+                        child: Image.asset(
+                          'assets/language2.png', // Sesuaikan path
+                          width:
+                              headerIconSize *
+                              (assetScales['assets/language2.png'] ?? 1.0) *
+                              1.5,
+                          height:
+                              headerIconSize *
+                              (assetScales['assets/language2.png'] ?? 1.0) *
+                              1.5,
+                        ),
+                      ),
+                    ),
+
+                    // 3. TOMBOL KANAN (Misal: Daily Gift) - Posisi standar / Sedikit ke bawah
+                    Transform.translate(
+                      offset: const Offset(
+                        0,
+                        15,
+                      ), // Geser ke bawah 15 pixel, sejajar dengan Shop
+                      child: _navItem(
+                        context,
+                        'assets/dailygift.png',
+                        'Daily',
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const DailyGiftScreen(),
+                            ),
+                          );
+                        },
+                        iconSize: navIconSize,
+                      ),
+                    ),
                   ],
                 ),
 
@@ -213,6 +279,14 @@ class HomeScreen extends StatelessWidget {
                         width: 260 * (assetScales['assets/castle.png'] ?? 1.0),
                         height: 260 * (assetScales['assets/castle.png'] ?? 1.0),
                         fit: BoxFit.contain,
+                        errorBuilder: (ctx, err, st) => Image.asset(
+                          'assets/dummy.png',
+                          width:
+                              260 * (assetScales['assets/castle.png'] ?? 1.0),
+                          height:
+                              260 * (assetScales['assets/castle.png'] ?? 1.0),
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ),
@@ -231,6 +305,13 @@ class HomeScreen extends StatelessWidget {
                       width:
                           260 * (assetScales['assets/Learningmode.png'] ?? 1.0),
                       fit: BoxFit.contain,
+                      errorBuilder: (ctx, err, st) => Image.asset(
+                        'assets/dummy.png',
+                        width:
+                            260 *
+                            (assetScales['assets/Learningmode.png'] ?? 1.0),
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
