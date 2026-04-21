@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:learning_gamification/core/controllers/gem_controller.dart';
+import 'package:learning_gamification/providers/gem_provider.dart';
 
 class ShopScreen extends StatelessWidget {
   const ShopScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final gemController = context.read<GemController>();
+    final gemController = context.read<GemProvider>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Gem Shop')),

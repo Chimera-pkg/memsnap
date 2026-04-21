@@ -9,10 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///   `SharedPreferences`.
 /// - Exposes methods to claim daily reward, add/spend gems, and unlock
 ///   categories.
-class GemController extends ChangeNotifier {
-  static const String _kBalanceKey = 'gem_balance';
-  static const String _kLastDailyKey = 'gem_last_daily';
-  static const String _kUnlockedKey = 'gem_unlocked_categories';
+class GemProvider extends ChangeNotifier {
+  static const String kBalanceKey = 'gem_balance';
+  static const String kLastDailyKey = 'gem_last_daily';
+  static const String kUnlockedKey = 'gem_unlocked_categories';
 
   /// Cost to unlock a single category (Milestone requirement)
   static const int categoryCost = 50;
@@ -26,7 +26,7 @@ class GemController extends ChangeNotifier {
 
   bool _initialized = false;
 
-  GemController({List<String>? freeCategories})
+  GemProvider({List<String>? freeCategories})
     : topFreeCategories =
           freeCategories ?? const ['category_1', 'category_2', 'category_3'];
 
@@ -34,13 +34,13 @@ class GemController extends ChangeNotifier {
   Future<void> init() async {
     if (_initialized) return;
     final prefs = await SharedPreferences.getInstance();
-    _balance = prefs.getInt(_kBalanceKey) ?? 0;
-    final last = prefs.getString(_kLastDailyKey);
+    _balance = prefs.getInt(kBalanceKey) ?? 0;
+    final last = prefs.getString(kLastDailyKey);
     if (last != null && last.isNotEmpty) {
       _lastDaily = DateTime.tryParse(last);
     }
     _unlocked.clear();
-    _unlocked.addAll(prefs.getStringList(_kUnlockedKey) ?? []);
+    _unlocked.addAll(prefs.getStringList(kUnlockedKey) ?? []);
     _initialized = true;
     notifyListeners();
   }
@@ -133,13 +133,13 @@ class GemController extends ChangeNotifier {
 
   Future<void> _savePrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_kBalanceKey, _balance);
+    await prefs.setInt(kBalanceKey, _balance);
     if (_lastDaily != null) {
-      await prefs.setString(_kLastDailyKey, _lastDaily!.toIso8601String());
+      await prefs.setString(kLastDailyKey, _lastDaily!.toIso8601String());
     } else {
-      await prefs.setString(_kLastDailyKey, '');
+      await prefs.setString(kLastDailyKey, '');
     }
-    await prefs.setStringList(_kUnlockedKey, _unlocked);
+    await prefs.setStringList(kUnlockedKey, _unlocked);
   }
 }
 

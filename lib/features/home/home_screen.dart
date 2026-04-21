@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:learning_gamification/core/controllers/gem_controller.dart';
+import 'package:learning_gamification/providers/gem_provider.dart';
 import 'package:learning_gamification/features/shop/shop_screen.dart';
 import 'package:learning_gamification/features/choose_language/choose_language_screen.dart';
 import 'package:learning_gamification/features/daily_gift/daily_gift_screen.dart';
 import 'package:learning_gamification/features/learning/learning_mode_screen.dart';
 import 'package:learning_gamification/shared/widgets/pressable_icon.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'settings_dialog.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
-  // Configure per-asset scales here. Edit these values in code to change sizes.
   static const Map<String, double> assetScales = {
     'assets/shop.png': 1.3,
+    'assets/language2.png': 1.0,
     'assets/Languageselect.png': 1.3,
     'assets/dailygift.png': 1.2,
     'assets/diamondbank.png': 2.0,
@@ -22,6 +22,28 @@ class HomeScreen extends StatelessWidget {
     'assets/Learningmode.png': 1.0,
   };
 
+  Widget _buildIcon(
+    String assetPath,
+    double baseSize, {
+    double? customScale,
+    bool constraintHeight = true,
+  }) {
+    final scale = customScale ?? assetScales[assetPath] ?? 1.0;
+    final size = baseSize * scale;
+    return Image.asset(
+      assetPath,
+      width: size,
+      height: constraintHeight ? size : null,
+      fit: BoxFit.contain,
+      errorBuilder: (ctx, err, st) => Image.asset(
+        'assets/dummy.png',
+        width: size,
+        height: constraintHeight ? size : null,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+
   Widget _navItem(
     BuildContext context,
     String assetPath,
@@ -29,26 +51,10 @@ class HomeScreen extends StatelessWidget {
     VoidCallback onTap, {
     double iconSize = 84.0,
   }) {
-    final scale = assetScales[assetPath] ?? 1.0;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        PressableIcon(
-          onTap: onTap,
-          child: Image.asset(
-            assetPath,
-            width: iconSize * scale,
-            height: iconSize * scale,
-            fit: BoxFit.contain,
-            errorBuilder: (ctx, err, st) => Image.asset(
-              'assets/dummy.png',
-              width: iconSize * scale,
-              height: iconSize * scale,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
+        PressableIcon(onTap: onTap, child: _buildIcon(assetPath, iconSize)),
         const SizedBox(height: 6),
         Text(label, style: const TextStyle(color: Colors.white70)),
       ],
@@ -57,7 +63,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gemController = context.watch<GemController>();
+    final gemController = context.watch<GemProvider>();
     const double navIconSize = 100.0;
     const double headerIconSize = 75.0;
 
@@ -78,7 +84,6 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header: diamond, gem count, help, three-dots
                 Row(
                   children: [
                     PressableIcon(
@@ -86,48 +91,20 @@ class HomeScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(builder: (_) => const ShopScreen()),
                       ),
-                      child: Row(
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          // Diamond image with gem count stacked on top
-                          Stack(
-                            alignment: Alignment.center,
+                          _buildIcon('assets/diamondbank.png', headerIconSize),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Image.asset(
-                                'assets/diamondbank.png',
-                                width:
-                                    headerIconSize *
-                                    (assetScales['assets/diamondbank.png'] ??
-                                        1.0),
-                                height:
-                                    headerIconSize *
-                                    (assetScales['assets/diamondbank.png'] ??
-                                        1.0),
-                                fit: BoxFit.contain,
-                                errorBuilder: (ctx, err, st) => Image.asset(
-                                  'assets/dummy.png',
-                                  width:
-                                      headerIconSize *
-                                      (assetScales['assets/diamondbank.png'] ??
-                                          1.0),
-                                  height:
-                                      headerIconSize *
-                                      (assetScales['assets/diamondbank.png'] ??
-                                          1.0),
-                                  fit: BoxFit.contain,
+                              Text(
+                                '${gemController.balance}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    '${gemController.balance}',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
                               ),
                             ],
                           ),
@@ -140,33 +117,15 @@ class HomeScreen extends StatelessWidget {
                         showDialog<void>(
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: const Text('Help'),
+                            contentPadding: EdgeInsets.zero,
                             content: Image.asset(
                               'assets/help_c.png',
-                              width:
-                                  headerIconSize *
-                                  (assetScales['assets/help.png'] ?? 1.0) *
-                                  1.6,
                               fit: BoxFit.contain,
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Close'),
-                              ),
-                            ],
                           ),
                         );
                       },
-                      child: Image.asset(
-                        'assets/help.png',
-                        width:
-                            headerIconSize *
-                            (assetScales['assets/help.png'] ?? 1.0),
-                        height:
-                            headerIconSize *
-                            (assetScales['assets/help.png'] ?? 1.0),
-                      ),
+                      child: _buildIcon('assets/help.png', headerIconSize),
                     ),
                     const SizedBox(width: 8),
                     PopupMenuButton<String>(
@@ -176,7 +135,7 @@ class HomeScreen extends StatelessWidget {
                         if (value == 'settings') {
                           showDialog<void>(
                             context: context,
-                            builder: (_) => const _SettingsDialog(),
+                            builder: (_) => const SettingsDialog(),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -194,70 +153,52 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                // row 3: shop, help, daily gift (duplicate for better spacing)
                 Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceEvenly, // Mengatur jarak horizontal agar rapi
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // 1. TOMBOL KIRI (Misal: Shop) - Posisi standar / Sedikit ke bawah
                     Transform.translate(
-                      offset: const Offset(0, 15), // Geser ke bawah 15 pixel
+                      offset: const Offset(0, 15),
                       child: PressableIcon(
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => const ShopScreen()),
                         ),
-                        child: Image.asset(
-                          'assets/shop.png',
-                          width:
-                              headerIconSize *
-                              (assetScales['assets/shop.png'] ?? 1.0),
-                          height:
-                              headerIconSize *
-                              (assetScales['assets/shop.png'] ?? 1.0),
-                        ),
+                        child: _buildIcon('assets/shop.png', headerIconSize),
                       ),
                     ),
-
-                    // 2. TOMBOL TENGAH (Misal: Language) - Posisinya dinaikkan
                     Transform.translate(
-                      offset: const Offset(
-                        0,
-                        -25,
-                      ), // Geser ke ATAS 25 pixel (Membentuk formasi segitiga/melengkung)
+                      offset: const Offset(0, -25),
                       child: PressableIcon(
                         onTap: () {
-                          // Logika Language...
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ChooseLanguageScreen(),
+                            ),
+                          );
                         },
-                        child: Image.asset(
-                          'assets/language2.png', // Sesuaikan path
-                          width:
-                              headerIconSize *
-                              (assetScales['assets/language2.png'] ?? 1.0) *
-                              1.5,
-                          height:
-                              headerIconSize *
-                              (assetScales['assets/language2.png'] ?? 1.0) *
-                              1.5,
+                        child: _buildIcon(
+                          'assets/language2.png',
+                          headerIconSize,
+                          customScale: 1.5,
                         ),
                       ),
                     ),
-
-                    // 3. TOMBOL KANAN (Misal: Daily Gift) - Posisi standar / Sedikit ke bawah
                     Transform.translate(
-                      offset: const Offset(
-                        0,
-                        15,
-                      ), // Geser ke bawah 15 pixel, sejajar dengan Shop
+                      offset: const Offset(0, 15),
                       child: _navItem(
                         context,
                         'assets/dailygift.png',
                         'Daily',
                         () {
+                          final claimFuture = context
+                              .read<GemProvider>()
+                              .claimDailyIfEligible();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const DailyGiftScreen(),
+                              builder: (_) =>
+                                  DailyGiftScreen(claimFuture: claimFuture),
                             ),
                           );
                         },
@@ -266,32 +207,15 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 12),
-
-                // Hero castle
                 Expanded(
                   child: Center(
                     child: PressableIcon(
                       onTap: null,
-                      child: Image.asset(
-                        'assets/castle.png',
-                        width: 260 * (assetScales['assets/castle.png'] ?? 1.0),
-                        height: 260 * (assetScales['assets/castle.png'] ?? 1.0),
-                        fit: BoxFit.contain,
-                        errorBuilder: (ctx, err, st) => Image.asset(
-                          'assets/dummy.png',
-                          width:
-                              260 * (assetScales['assets/castle.png'] ?? 1.0),
-                          height:
-                              260 * (assetScales['assets/castle.png'] ?? 1.0),
-                          fit: BoxFit.contain,
-                        ),
-                      ),
+                      child: _buildIcon('assets/castle.png', 260.0),
                     ),
                   ),
                 ),
-
                 Center(
                   child: PressableIcon(
                     onTap: () => Navigator.push(
@@ -300,117 +224,18 @@ class HomeScreen extends StatelessWidget {
                         builder: (_) => const LearningModeScreen(),
                       ),
                     ),
-                    child: Image.asset(
+                    child: _buildIcon(
                       'assets/Learningmode.png',
-                      width:
-                          260 * (assetScales['assets/Learningmode.png'] ?? 1.0),
-                      fit: BoxFit.contain,
-                      errorBuilder: (ctx, err, st) => Image.asset(
-                        'assets/dummy.png',
-                        width:
-                            260 *
-                            (assetScales['assets/Learningmode.png'] ?? 1.0),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 18),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsDialog extends StatefulWidget {
-  const _SettingsDialog({Key? key}) : super(key: key);
-
-  @override
-  State<_SettingsDialog> createState() => _SettingsDialogState();
-}
-
-class _SettingsDialogState extends State<_SettingsDialog> {
-  static const _kMusicKey = 'music_on';
-  bool _musicOn = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _musicOn = prefs.getBool(_kMusicKey) ?? true;
-    });
-  }
-
-  Future<void> _set(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_kMusicKey, value);
-    setState(() => _musicOn = value);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Settings'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: () => _set(!_musicOn),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Image.asset(
-                  'assets/settings1.png',
-                  width: 160,
-                  height: 160,
-                  fit: BoxFit.contain,
-                ),
-                Positioned(
-                  bottom: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      _musicOn ? 'Music: ON' : 'Music: OFF',
-                      style: const TextStyle(color: Colors.white),
+                      260.0,
+                      constraintHeight: false,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Music'),
-              const SizedBox(width: 8),
-              Switch(value: _musicOn, onChanged: (v) => _set(v)),
-            ],
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Close'),
         ),
-      ],
+      ),
     );
   }
 }

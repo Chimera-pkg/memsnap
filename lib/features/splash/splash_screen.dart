@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
 
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Wait 2 seconds then navigate to home
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
-      Navigator.of(context).pushReplacementNamed('/');
-    });
-  }
+  static bool _initialized = false;
 
   @override
   Widget build(BuildContext context) {
+    if (!_initialized) {
+      _initialized = true;
+      Future.delayed(const Duration(seconds: 2), () {
+        if (context.mounted) {
+          Navigator.of(context).pushReplacementNamed('/');
+        }
+      });
+    }
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(

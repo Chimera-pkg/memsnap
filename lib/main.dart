@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:learning_gamification/core/controllers/gem_controller.dart';
+import 'package:learning_gamification/providers/gem_provider.dart';
 import 'package:learning_gamification/features/home/home_screen.dart';
 import 'package:learning_gamification/features/splash/splash_screen.dart';
 import 'package:learning_gamification/features/shop/shop_screen.dart';
@@ -9,14 +9,11 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final gemController = GemController();
-  await gemController.init();
-
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
-      builder: (context) => ChangeNotifierProvider.value(
-        value: gemController,
+      builder: (context) => MultiProvider(
+        providers: [ChangeNotifierProvider(create: (_) => GemProvider())],
         child: const MyApp(),
       ),
     ),
@@ -24,7 +21,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
