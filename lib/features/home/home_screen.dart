@@ -7,12 +7,50 @@ import 'package:learning_gamification/features/shop/shop_screen.dart';
 import 'package:learning_gamification/features/daily_gift/daily_gift_screen.dart';
 import 'package:learning_gamification/features/learning/learning_mode_screen.dart';
 import 'package:learning_gamification/shared/widgets/pressable_icon.dart';
-import 'settings_dialog.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  static final AudioPlayer _audioPlayer = AudioPlayer();
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // Gunakan instance terpisah untuk musik latar agar tidak terinterupsi suara klik
+  late AudioPlayer _bgMusicPlayer;
+  late AudioPlayer _sfxPlayer;
+  bool _isMusicPlaying = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _bgMusicPlayer = AudioPlayer();
+    _sfxPlayer = AudioPlayer();
+
+    _startBackgroundMusic();
+  }
+
+  Future<void> _startBackgroundMusic() async {
+    try {
+      // Set agar musik berputar terus menerus (looping)
+      await _bgMusicPlayer.setReleaseMode(ReleaseMode.loop);
+      await _bgMusicPlayer.play(AssetSource('audio/mainmusic.wav'));
+    } catch (e) {
+      debugPrint("Error play background music: $e");
+    }
+  }
+
+  void _playSfx(String path) {
+    _sfxPlayer.play(AssetSource(path));
+  }
+
+  @override
+  void dispose() {
+    // Bersihkan resource saat widget dihancurkan
+    _bgMusicPlayer.dispose();
+    _sfxPlayer.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,39 +83,41 @@ class HomeScreen extends StatelessWidget {
                       alignment: Alignment.center,
                       children: [
                         PressableIcon(
-                          onTap: () {
-                            _audioPlayer.play(AssetSource('audio/click.mp3'));
-                            Navigator.push(
+                          onTap: () async {
+                            _playSfx('audio/click.mp3');
+                            if (_isMusicPlaying) {
+                              _bgMusicPlayer.pause();
+                            }
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const ShopScreen(),
                               ),
                             );
+                            if (_isMusicPlaying) {
+                              _bgMusicPlayer.resume();
+                            }
                           },
                           assetPath: 'assets/diamondbank.png',
                           baseSize: headerIconSize,
                         ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '${gemProvider.balance}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          '${gemProvider.balance}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
                     const Spacer(),
                     PressableIcon(
                       onTap: () {
-                        _audioPlayer.play(AssetSource('audio/click.mp3'));
-                        showDialog<void>(
+                        _playSfx('audio/click.mp3');
+                        showDialog(
                           context: context,
+                          barrierColor: Colors.white.withOpacity(0.2),
                           builder: (_) => AlertDialog(
                             contentPadding: EdgeInsets.zero,
                             content: Image.asset(
@@ -91,46 +131,67 @@ class HomeScreen extends StatelessWidget {
                       baseSize: headerIconSize,
                     ),
                     const SizedBox(width: 8),
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, color: Colors.white),
-                      color: Colors.black87,
-                      onSelected: (value) {
-                        _audioPlayer.play(AssetSource('audio/click.mp3'));
-                        if (value == 'settings') {
-                          showDialog<void>(
-                            context: context,
-                            builder: (_) => const SettingsDialog(),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Selected: $value')),
-                          );
-                        }
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          useSafeArea: true,
+                          barrierColor: Colors.white.withValues(alpha: 0.2),
+                          builder: (_) => Dialog(
+                            alignment: Alignment.topRight,
+                            backgroundColor: Colors.transparent,
+                            insetPadding: const EdgeInsets.only(
+                              right: 40,
+                              top: 80,
+                            ),
+                            constraints: const BoxConstraints(
+                              maxWidth: 200,
+                              maxHeight: 200,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (_isMusicPlaying) {
+                                  _bgMusicPlayer.pause();
+                                } else {
+                                  _bgMusicPlayer.resume();
+                                }
+                                setState(() {
+                                  _isMusicPlaying = !_isMusicPlaying;
+                                });
+                              },
+                              child: Image.asset(
+                                'assets/settings1.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        );
                       },
-                      itemBuilder: (ctx) => const [
-                        PopupMenuItem(
-                          value: 'settings',
-                          child: Text('Settings'),
-                        ),
-                        PopupMenuItem(value: 'about', child: Text('About')),
-                      ],
+                      child: Icon(Icons.menu, color: Colors.white),
                     ),
                   ],
                 ),
+                // Bagian menu tengah
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Transform.translate(
                       offset: const Offset(0, 15),
                       child: PressableIcon(
-                        onTap: () {
-                          _audioPlayer.play(AssetSource('audio/click.mp3'));
-                          Navigator.push(
+                        onTap: () async {
+                          _playSfx('audio/click.mp3');
+                          if (_isMusicPlaying) {
+                            _bgMusicPlayer.pause();
+                          }
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => const ShopScreen(),
                             ),
                           );
+                          if (_isMusicPlaying) {
+                            _bgMusicPlayer.resume();
+                          }
                         },
                         assetPath: 'assets/shop.png',
                         baseSize: headerIconSize,
@@ -140,67 +201,8 @@ class HomeScreen extends StatelessWidget {
                       offset: const Offset(0, -25),
                       child: PressableIcon(
                         onTap: () {
-                          _audioPlayer.play(AssetSource('audio/click.mp3'));
-                          showDialog(
-                            context: context,
-                            barrierColor: Colors.white.withOpacity(0.2),
-                            builder: (context) {
-                              return Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.4,
-                                  child: Column(
-                                    children: [
-                                      GestureDetector(
-                                        child: Image.asset(
-                                          "assets/spanish.png",
-                                        ),
-                                        onTap: () {
-                                          _audioPlayer.play(
-                                            AssetSource('audio/changelanguage.mp3'),
-                                          );
-                                          langProvider.setSelectedLanguage(
-                                            context,
-                                            "Spanish",
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                      GestureDetector(
-                                        child: Image.asset("assets/french.png"),
-                                        onTap: () {
-                                          _audioPlayer.play(
-                                            AssetSource('audio/changelanguage.mp3'),
-                                          );
-                                          langProvider.setSelectedLanguage(
-                                            context,
-                                            "French",
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                      GestureDetector(
-                                        child: Image.asset(
-                                          "assets/chinese.png",
-                                        ),
-                                        onTap: () {
-                                          _audioPlayer.play(
-                                            AssetSource('audio/changelanguage.mp3'),
-                                          );
-                                          langProvider.setSelectedLanguage(
-                                            context,
-                                            "Chinese",
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
+                          _playSfx('audio/click.mp3');
+                          _showLanguageDialog(langProvider);
                         },
                         assetPath: 'assets/language2.png',
                         baseSize: headerIconSize,
@@ -211,7 +213,7 @@ class HomeScreen extends StatelessWidget {
                       offset: const Offset(0, 15),
                       child: PressableIcon(
                         onTap: () {
-                          _audioPlayer.play(AssetSource('audio/click.mp3'));
+                          _playSfx('audio/click.mp3');
                           final claimFuture = context
                               .read<GemProvider>()
                               .claimDailyIfEligible();
@@ -243,7 +245,7 @@ class HomeScreen extends StatelessWidget {
                 Center(
                   child: PressableIcon(
                     onTap: () {
-                      _audioPlayer.play(AssetSource('audio/click.mp3'));
+                      _playSfx('audio/click.mp3');
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -258,6 +260,32 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Helper untuk dialog bahasa agar kode build lebih bersih
+  void _showLanguageDialog(LanguageProvider langProvider) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.white.withOpacity(0.2),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+          child: Column(
+            children: ['Spanish', 'French', 'Chinese'].map((lang) {
+              return GestureDetector(
+                onTap: () {
+                  _playSfx('audio/changelanguage.mp3');
+                  langProvider.setSelectedLanguage(context, lang);
+                  Navigator.pop(context);
+                },
+                child: Image.asset("assets/${lang.toLowerCase()}.png"),
+              );
+            }).toList(),
           ),
         ),
       ),

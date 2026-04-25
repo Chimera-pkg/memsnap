@@ -5,10 +5,39 @@ import 'package:learning_gamification/shared/widgets/snackbar_widget.dart';
 import 'package:learning_gamification/shared/widgets/pressable_icon.dart';
 import 'package:provider/provider.dart';
 
-class ShopScreen extends StatelessWidget {
+class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
 
+  @override
+  State<ShopScreen> createState() => _ShopScreenState();
+}
+
+class _ShopScreenState extends State<ShopScreen> {
   static final AudioPlayer _audioPlayer = AudioPlayer();
+  late AudioPlayer _bgMusicPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _bgMusicPlayer = AudioPlayer();
+    _startBackgroundMusic();
+  }
+
+  Future<void> _startBackgroundMusic() async {
+    try {
+      await _bgMusicPlayer.setReleaseMode(ReleaseMode.loop);
+      await _bgMusicPlayer.play(AssetSource('audio/shopmusic.wav'));
+    } catch (e) {
+      debugPrint("Error play shop background music: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _bgMusicPlayer.stop();
+    _bgMusicPlayer.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -15,7 +15,7 @@ class SplashScreen extends StatelessWidget {
       _isNavigating = true;
 
       try {
-        await _audioPlayer.play(AssetSource('audio/appintro.mp3'));
+        _audioPlayer.play(AssetSource('audio/appintro.mp3'));
       } catch (e) {
         debugPrint("Error play audio: $e");
       }
