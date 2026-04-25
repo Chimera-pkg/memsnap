@@ -231,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+
                 Expanded(
                   child: Center(
                     child: PressableIcon(

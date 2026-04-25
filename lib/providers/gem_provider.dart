@@ -1,6 +1,9 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:learning_gamification/shared/widgets/snackbar_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Controller that manages the gem economy.
@@ -83,13 +86,30 @@ class GemProvider extends ChangeNotifier {
   }
 
   /// Spend gems if enough balance. Returns true when successful.
-  Future<bool> spendGems(int amount) async {
-    if (amount <= 0) return false;
-    if (_balance < amount) return false;
+  void spendGems(BuildContext context, int amount) async {
+    if (amount <= 0) {
+      return SnackbarWidget.show(
+        context,
+        message: 'Gems is not enough',
+        backgroundColor: Colors.red,
+      );
+    }
+    ;
+    if (_balance < amount) {
+      return SnackbarWidget.show(
+        context,
+        message: 'Gems is not enough',
+        backgroundColor: Colors.red,
+      );
+    }
     _balance -= amount;
     await _savePrefs();
     notifyListeners();
-    return true;
+    SnackbarWidget.show(
+      context,
+      message: 'Success',
+      backgroundColor: Colors.green,
+    );
   }
 
   /// Check if a category is unlocked (either purchased or top-free).

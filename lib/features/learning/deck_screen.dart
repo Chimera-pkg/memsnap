@@ -1,19 +1,19 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:learning_gamification/features/learning/deck_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:learning_gamification/providers/gem_provider.dart';
+import 'package:learning_gamification/features/learning/victory_screen.dart';
 import 'package:learning_gamification/features/shop/shop_screen.dart';
+import 'package:learning_gamification/providers/gem_provider.dart';
 import 'package:learning_gamification/shared/widgets/pressable_icon.dart';
+import 'package:provider/provider.dart';
 
-class LearningModeScreen extends StatefulWidget {
-  const LearningModeScreen({super.key});
+class DeckScreen extends StatefulWidget {
+  const DeckScreen({super.key});
 
   @override
-  State<LearningModeScreen> createState() => _LearningModeScreenState();
+  State<DeckScreen> createState() => _DeckScreenState();
 }
 
-class _LearningModeScreenState extends State<LearningModeScreen> {
+class _DeckScreenState extends State<DeckScreen> {
   // Gunakan instance terpisah untuk musik latar agar tidak terinterupsi suara klik
   late AudioPlayer _bgMusicPlayer;
   late AudioPlayer _sfxPlayer;
@@ -135,70 +135,16 @@ class _LearningModeScreenState extends State<LearningModeScreen> {
                     ),
                   ],
                 ),
-                Expanded(
-                  flex: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Image.asset(
-                      'assets/learningdeck.png',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: PressableIcon(
-                      onTap: () {
-                        _playSfx('audio/click.mp3');
-                        gemProvider.spendGems(context, 50);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const DeckScreen()),
-                        );
-                      },
-                      child: Image.asset(
-                        'assets/numbers.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: PressableIcon(
-                      onTap: () {
-                        _playSfx('audio/click.mp3');
-                        gemProvider.spendGems(context, 50);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const DeckScreen()),
-                        );
-                      },
-                      child: Image.asset(
-                        'assets/places.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: PressableIcon(
-                      onTap: () {
-                        _playSfx('audio/click.mp3');
-                      },
-                      child: Image.asset(
-                        'assets/eating.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
+                PressableIcon(
+                  onTap: () {
+                    _playSfx('audio/click.mp3');
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const VictoryScreen()),
+                    );
+                  },
+                  assetPath: 'assets/dummy.png',
+                  baseSize: 500,
                 ),
               ],
             ),

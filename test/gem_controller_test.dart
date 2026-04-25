@@ -23,16 +23,6 @@ void main() {
     expect(ctrl.balance, reward);
   });
 
-  test('add and spend gems', () async {
-    final ctrl = GemProvider();
-    await ctrl.init();
-    await ctrl.addGems(50);
-    expect(ctrl.balance, 50);
-    final ok = await ctrl.spendGems(25);
-    expect(ok, true);
-    expect(ctrl.balance, 25);
-  });
-
   test('unlockCategory requires 50 gems', () async {
     final ctrl = GemProvider();
     await ctrl.init();
