@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:learning_gamification/providers/gem_provider.dart';
 import 'package:learning_gamification/shared/widgets/snackbar_widget.dart';
+import 'package:learning_gamification/shared/widgets/pressable_icon.dart';
 import 'package:provider/provider.dart';
 
 class ShopScreen extends StatelessWidget {
@@ -32,7 +33,7 @@ class ShopScreen extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: GestureDetector(
+                        child: PressableIcon(
                           onTap: () async {
                             await gemProvider.addGems(50);
                             if (context.mounted) {
@@ -50,7 +51,7 @@ class ShopScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: GestureDetector(
+                        child: PressableIcon(
                           onTap: () async {
                             await gemProvider.addGems(120);
                             if (context.mounted) {
@@ -75,7 +76,7 @@ class ShopScreen extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: GestureDetector(
+                        child: PressableIcon(
                           onTap: () async {
                             await gemProvider.addGems(300);
                             if (context.mounted) {
@@ -93,7 +94,7 @@ class ShopScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: GestureDetector(
+                        child: PressableIcon(
                           onTap: () async {
                             await gemProvider.addGems(700);
                             if (context.mounted) {
@@ -115,7 +116,7 @@ class ShopScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  GestureDetector(
+                  PressableIcon(
                     onTap: () async {
                       await gemProvider.addGems(1500);
                       if (context.mounted) {

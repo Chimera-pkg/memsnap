@@ -11,56 +11,6 @@ import 'settings_dialog.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  static const Map<String, double> assetScales = {
-    'assets/shop.png': 1.3,
-    'assets/language2.png': 1.0,
-    'assets/Languageselect.png': 1.3,
-    'assets/dailygift.png': 1.2,
-    'assets/diamondbank.png': 2.0,
-    'assets/help.png': 1.9,
-    'assets/castle.png': 2.0,
-    'assets/Learningmode.png': 1.0,
-  };
-
-  Widget _buildIcon(
-    String assetPath,
-    double baseSize, {
-    double? customScale,
-    bool constraintHeight = true,
-  }) {
-    final scale = customScale ?? assetScales[assetPath] ?? 1.0;
-    final size = baseSize * scale;
-    return Image.asset(
-      assetPath,
-      width: size,
-      height: constraintHeight ? size : null,
-      fit: BoxFit.contain,
-      errorBuilder: (ctx, err, st) => Image.asset(
-        'assets/dummy.png',
-        width: size,
-        height: constraintHeight ? size : null,
-        fit: BoxFit.contain,
-      ),
-    );
-  }
-
-  Widget _navItem(
-    BuildContext context,
-    String assetPath,
-    String label,
-    VoidCallback onTap, {
-    double iconSize = 84.0,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        PressableIcon(onTap: onTap, child: _buildIcon(assetPath, iconSize)),
-        const SizedBox(height: 6),
-        Text(label, style: const TextStyle(color: Colors.white70)),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final gemController = context.watch<GemProvider>();
@@ -86,30 +36,33 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    PressableIcon(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ShopScreen()),
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          _buildIcon('assets/diamondbank.png', headerIconSize),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${gemController.balance}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        PressableIcon(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ShopScreen(),
+                            ),
                           ),
-                        ],
-                      ),
+                          assetPath: 'assets/diamondbank.png',
+                          baseSize: headerIconSize,
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${gemController.balance}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     const Spacer(),
                     PressableIcon(
@@ -125,7 +78,8 @@ class HomeScreen extends StatelessWidget {
                           ),
                         );
                       },
-                      child: _buildIcon('assets/help.png', headerIconSize),
+                      assetPath: 'assets/help.png',
+                      baseSize: headerIconSize,
                     ),
                     const SizedBox(width: 8),
                     PopupMenuButton<String>(
@@ -163,7 +117,8 @@ class HomeScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(builder: (_) => const ShopScreen()),
                         ),
-                        child: _buildIcon('assets/shop.png', headerIconSize),
+                        assetPath: 'assets/shop.png',
+                        baseSize: headerIconSize,
                       ),
                     ),
                     Transform.translate(
@@ -177,20 +132,17 @@ class HomeScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        child: _buildIcon(
-                          'assets/language2.png',
-                          headerIconSize,
+                        child: PressableIcon(
+                          assetPath: 'assets/language2.png',
+                          baseSize: headerIconSize,
                           customScale: 1.5,
                         ),
                       ),
                     ),
                     Transform.translate(
                       offset: const Offset(0, 15),
-                      child: _navItem(
-                        context,
-                        'assets/dailygift.png',
-                        'Daily',
-                        () {
+                      child: PressableIcon(
+                        onTap: () {
                           final claimFuture = context
                               .read<GemProvider>()
                               .claimDailyIfEligible();
@@ -202,7 +154,8 @@ class HomeScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        iconSize: navIconSize,
+                        assetPath: 'assets/dailygift.png',
+                        baseSize: navIconSize,
                       ),
                     ),
                   ],
@@ -211,8 +164,8 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: Center(
                     child: PressableIcon(
-                      onTap: null,
-                      child: _buildIcon('assets/castle.png', 260.0),
+                      assetPath: 'assets/castle.png',
+                      baseSize: 260.0,
                     ),
                   ),
                 ),
@@ -224,11 +177,9 @@ class HomeScreen extends StatelessWidget {
                         builder: (_) => const LearningModeScreen(),
                       ),
                     ),
-                    child: _buildIcon(
-                      'assets/Learningmode.png',
-                      260.0,
-                      constraintHeight: false,
-                    ),
+                    assetPath: 'assets/Learningmode.png',
+                    baseSize: 260.0,
+                    constraintHeight: false,
                   ),
                 ),
               ],
