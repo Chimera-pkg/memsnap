@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learning_gamification/providers/language_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:learning_gamification/providers/gem_provider.dart';
 import 'package:learning_gamification/features/home/home_screen.dart';
@@ -13,7 +14,10 @@ Future<void> main() async {
     DevicePreview(
       enabled: !kReleaseMode,
       builder: (context) => MultiProvider(
-        providers: [ChangeNotifierProvider(create: (_) => GemProvider())],
+        providers: [
+          ChangeNotifierProvider(create: (_) => GemProvider()),
+          ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ],
         child: const MyApp(),
       ),
     ),

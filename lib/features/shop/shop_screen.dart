@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_gamification/providers/gem_provider.dart';
 import 'package:learning_gamification/shared/widgets/snackbar_widget.dart';
@@ -6,6 +7,8 @@ import 'package:provider/provider.dart';
 
 class ShopScreen extends StatelessWidget {
   const ShopScreen({super.key});
+
+  static final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +40,9 @@ class ShopScreen extends StatelessWidget {
                           onTap: () async {
                             await gemProvider.addGems(50);
                             if (context.mounted) {
+                              _audioPlayer.play(
+                                AssetSource('audio/gemreward.mp3'),
+                              );
                               SnackbarWidget.show(
                                 context,
                                 message: "50 gems added!",
@@ -55,6 +61,9 @@ class ShopScreen extends StatelessWidget {
                           onTap: () async {
                             await gemProvider.addGems(120);
                             if (context.mounted) {
+                              _audioPlayer.play(
+                                AssetSource('audio/gemreward.mp3'),
+                              );
                               SnackbarWidget.show(
                                 context,
                                 message: "120 gems added!",
@@ -80,6 +89,9 @@ class ShopScreen extends StatelessWidget {
                           onTap: () async {
                             await gemProvider.addGems(300);
                             if (context.mounted) {
+                              _audioPlayer.play(
+                                AssetSource('audio/gemreward.mp3'),
+                              );
                               SnackbarWidget.show(
                                 context,
                                 message: "300 gems added!",
@@ -98,6 +110,9 @@ class ShopScreen extends StatelessWidget {
                           onTap: () async {
                             await gemProvider.addGems(700);
                             if (context.mounted) {
+                              _audioPlayer.play(
+                                AssetSource('audio/gemreward.mp3'),
+                              );
                               SnackbarWidget.show(
                                 context,
                                 message: "700 gems added!",
@@ -120,6 +135,7 @@ class ShopScreen extends StatelessWidget {
                     onTap: () async {
                       await gemProvider.addGems(1500);
                       if (context.mounted) {
+                        _audioPlayer.play(AssetSource('audio/gemreward.mp3'));
                         SnackbarWidget.show(
                           context,
                           message: "1500 gems added!",
