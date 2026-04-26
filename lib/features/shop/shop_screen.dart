@@ -62,6 +62,23 @@ class _ShopScreenState extends State<ShopScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Stack(
+                    alignment: Alignment.topLeft,
+                    children: [
+                      Image.asset("shop_banner.png"),
+                      PressableIcon(
+                        onTap: () {
+                          if (context.mounted) {
+                            _audioPlayer.play(AssetSource('audio/click.mp3'));
+                            Navigator.pop(context);
+                          }
+                        },
+                        assetPath: 'close.png',
+                        baseSize: 30,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
