@@ -57,8 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final gemProvider = context.watch<GemProvider>();
     final langProvider = context.watch<LanguageProvider>();
 
-    const double navIconSize = 100.0;
-    const double headerIconSize = 75.0;
+    final Size screenSize = MediaQuery.of(context).size;
+    final double navIconSize = (screenSize.width * 0.25).clamp(60.0, 100.0);
+    final double headerIconSize = (screenSize.width * 0.18).clamp(50.0, 75.0);
+    final double learningModeSize = (screenSize.width * 0.65).clamp(
+      180.0,
+      260.0,
+    );
 
     return Scaffold(
       body: Container(
@@ -70,9 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 12.0,
+            padding: EdgeInsets.symmetric(
+              horizontal: screenSize.width * 0.04,
+              vertical: screenSize.height * 0.015,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -103,9 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         Text(
                           '${gemProvider.balance}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: (headerIconSize * 0.2).clamp(12.0, 16.0),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -167,10 +172,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
-                      child: Icon(Icons.menu, color: Colors.white),
+                      child: const Icon(Icons.menu, color: Colors.white),
                     ),
                   ],
                 ),
+
+                SizedBox(height: screenSize.height * 0.02),
+
                 // Bagian menu tengah
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -234,11 +242,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 Expanded(
                   child: Center(
-                    child: PressableIcon(
-                      assetPath: langProvider.selectedLanguage != null
-                          ? 'assets/castle1.png'
-                          : 'assets/castle.png',
-                      baseSize: 260.0,
+                    child: Transform.scale(
+                      scale:
+                          1.4, // Anda dapat mengatur angka ini (misalnya 1.3 atau 1.5) jika ingin lebih besar lagi
+                      child: Image.asset(
+                        langProvider.selectedLanguage != null
+                            ? 'assets/castle1.png'
+                            : 'assets/castle.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
@@ -254,10 +266,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     assetPath: 'assets/Learningmode.png',
-                    baseSize: 260.0,
+                    baseSize: learningModeSize,
                     constraintHeight: false,
                   ),
                 ),
+                SizedBox(height: screenSize.height * 0.01),
               ],
             ),
           ),
