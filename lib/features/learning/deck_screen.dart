@@ -97,6 +97,7 @@ class _DeckScreenState extends State<DeckScreen> {
                     const SizedBox(width: 8),
                     GestureDetector(
                       onTap: () {
+                        _playSfx('audio/click.mp3');
                         showDialog(
                           context: context,
                           useSafeArea: true,
@@ -104,34 +105,62 @@ class _DeckScreenState extends State<DeckScreen> {
                           builder: (_) => Dialog(
                             alignment: Alignment.topRight,
                             backgroundColor: Colors.transparent,
-                            insetPadding: const EdgeInsets.only(
-                              right: 40,
-                              top: 80,
-                            ),
+                            insetPadding: const EdgeInsets.only(top: 100),
                             constraints: const BoxConstraints(
                               maxWidth: 200,
-                              maxHeight: 200,
+                              maxHeight: 300,
                             ),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (_isMusicPlaying) {
-                                  _bgMusicPlayer.pause();
-                                } else {
-                                  _bgMusicPlayer.resume();
-                                }
-                                setState(() {
-                                  _isMusicPlaying = !_isMusicPlaying;
-                                });
-                              },
-                              child: Image.asset(
-                                'assets/settings1.png',
-                                fit: BoxFit.contain,
-                              ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (_isMusicPlaying) {
+                                      _bgMusicPlayer.pause();
+                                    } else {
+                                      _bgMusicPlayer.resume();
+                                    }
+                                    setState(() {
+                                      _isMusicPlaying = !_isMusicPlaying;
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  child: Image.asset(
+                                    _isMusicPlaying
+                                        ? 'assets/music_off.png'
+                                        : 'assets/music_on.png',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 50,
+                                  ),
+                                ),
+                                // GestureDetector(
+                                //   onTap: () {
+                                //     if (_isMusicPlaying) {
+                                //       _bgMusicPlayer.pause();
+                                //     } else {
+                                //       _bgMusicPlayer.resume();
+                                //     }
+                                //     setState(() {
+                                //       _isMusicPlaying = !_isMusicPlaying;
+                                //     });
+                                //     Navigator.pop(context);
+                                //   },
+                                //   child: Image.asset(
+                                //     _isMusicPlaying
+                                //         ? 'assets/sound_off.png'
+                                //         : 'assets/sound_on.png',
+                                //     fit: BoxFit.cover,
+                                //     width: double.infinity,
+                                //     height: 50,
+                                //   ),
+                                // ),
+                              ],
                             ),
                           ),
                         );
                       },
-                      child: Icon(Icons.menu, color: Colors.white),
+                      child: const Icon(Icons.menu, color: Colors.white),
                     ),
                   ],
                 ),
