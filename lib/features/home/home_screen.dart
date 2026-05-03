@@ -206,11 +206,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
 
-                SizedBox(height: screenSize.height * 0.02),
+                // SizedBox(height: screenSize.height * 0.01),
 
                 // Bagian menu tengah
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Transform.translate(
                       offset: const Offset(0, 15),
@@ -232,10 +232,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         assetPath: 'assets/shop.png',
                         baseSize: headerIconSize,
+                        customScale: 1.4,
                       ),
                     ),
                     Transform.translate(
-                      offset: const Offset(0, -25),
+                      offset: const Offset(13, -25),
                       child: PressableIcon(
                         onTap: () {
                           _playSfx('audio/click.mp3');
@@ -243,11 +244,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         assetPath: 'assets/language2.png',
                         baseSize: headerIconSize,
-                        customScale: 1.5,
+                        customScale: 1.6,
                       ),
                     ),
                     Transform.translate(
-                      offset: const Offset(0, 15),
+                      offset: const Offset(12, 15),
                       child: PressableIcon(
                         onTap: () {
                           _playSfx('audio/click.mp3');
@@ -264,6 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         assetPath: 'assets/dailygift.png',
                         baseSize: navIconSize,
+                        customScale: 1.2,
                       ),
                     ),
                   ],
