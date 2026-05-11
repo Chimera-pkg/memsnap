@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_gamification/features/learning/deck_screen.dart';
+import 'package:learning_gamification/shared/widgets/snackbar_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:learning_gamification/providers/gem_provider.dart';
 import 'package:learning_gamification/features/shop/shop_screen.dart';
@@ -181,10 +182,17 @@ class _LearningModeScreenState extends State<LearningModeScreen> {
                     child: PressableIcon(
                       onTap: () {
                         _playSfx('audio/click.mp3');
+                        if (gemProvider.balance < 50) {
+                          return SnackbarWidget.show(
+                            context,
+                            message: 'Gems is not enough',
+                            backgroundColor: Colors.red,
+                          );
+                        }
                         gemProvider.spendGems(context, 50);
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => const DeckScreen()),
+                          MaterialPageRoute(builder: (_) => const DeckScreen(mode: 'numbers')),
                         );
                       },
                       child: Image.asset(
@@ -201,10 +209,17 @@ class _LearningModeScreenState extends State<LearningModeScreen> {
                     child: PressableIcon(
                       onTap: () {
                         _playSfx('audio/click.mp3');
+                        if (gemProvider.balance < 50) {
+                          return SnackbarWidget.show(
+                            context,
+                            message: 'Gems is not enough',
+                            backgroundColor: Colors.red,
+                          );
+                        }
                         gemProvider.spendGems(context, 50);
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => const DeckScreen()),
+                          MaterialPageRoute(builder: (_) => const DeckScreen(mode: 'places')),
                         );
                       },
                       child: Image.asset(

@@ -5,9 +5,12 @@ import 'package:learning_gamification/features/shop/shop_screen.dart';
 import 'package:learning_gamification/providers/gem_provider.dart';
 import 'package:learning_gamification/shared/widgets/pressable_icon.dart';
 import 'package:provider/provider.dart';
+import 'package:appinio_swiper/appinio_swiper.dart';
 
 class DeckScreen extends StatefulWidget {
-  const DeckScreen({super.key});
+  final String mode;
+
+  const DeckScreen({super.key, required this.mode});
 
   @override
   State<DeckScreen> createState() => _DeckScreenState();
@@ -19,10 +22,20 @@ class _DeckScreenState extends State<DeckScreen> {
   late AudioPlayer _sfxPlayer;
   bool _isMusicPlaying = true;
 
+  late List<String> _cards;
+
   @override
   void initState() {
     super.initState();
     _sfxPlayer = AudioPlayer();
+    
+    if (widget.mode == 'numbers') {
+      _cards = List.generate(10, (index) => 'assets/number-${index + 1}.png');
+    } else if (widget.mode == 'places') {
+      _cards = List.generate(4, (index) => 'assets/places-${index + 1}.png');
+    } else {
+      _cards = [];
+    }
   }
 
   void _playSfx(String path) {
@@ -164,16 +177,28 @@ class _DeckScreenState extends State<DeckScreen> {
                     ),
                   ],
                 ),
-                PressableIcon(
-                  onTap: () {
-                    _playSfx('audio/click.mp3');
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const VictoryScreen()),
-                    );
-                  },
-                  assetPath: 'assets/dummy.png',
-                  baseSize: 500,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                    child: AppinioSwiper(
+                      cardCount: _cards.length,
+                      onSwipeEnd: (int previousIndex, int targetIndex, SwiperActivity activity) {
+                        _playSfx('audio/click.mp3');
+                      },
+                      onEnd: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const VictoryScreen()),
+                        );
+                      },
+                      cardBuilder: (BuildContext context, int index) {
+                        return Image.asset(
+                          _cards[index],
+                          fit: BoxFit.contain,
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ],
             ),
