@@ -28,7 +28,7 @@ class _DeckScreenState extends State<DeckScreen> {
   void initState() {
     super.initState();
     _sfxPlayer = AudioPlayer();
-    
+
     if (widget.mode == 'numbers') {
       _cards = List.generate(10, (index) => 'assets/number-${index + 1}.png');
     } else if (widget.mode == 'places') {
@@ -178,26 +178,29 @@ class _DeckScreenState extends State<DeckScreen> {
                   ],
                 ),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                    child: AppinioSwiper(
-                      cardCount: _cards.length,
-                      onSwipeEnd: (int previousIndex, int targetIndex, SwiperActivity activity) {
-                        _playSfx('audio/click.mp3');
-                      },
-                      onEnd: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => const VictoryScreen()),
-                        );
-                      },
-                      cardBuilder: (BuildContext context, int index) {
-                        return Image.asset(
-                          _cards[index],
-                          fit: BoxFit.contain,
-                        );
-                      },
-                    ),
+                  child: AppinioSwiper(
+                    cardCount: _cards.length,
+                    onSwipeEnd:
+                        (
+                          int previousIndex,
+                          int targetIndex,
+                          SwiperActivity activity,
+                        ) {
+                          _playSfx('audio/click.mp3');
+                        },
+                    onEnd: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const VictoryScreen(),
+                        ),
+                      );
+                    },
+                    cardBuilder: (BuildContext context, int index) {
+                      return SizedBox(
+                        child: Image.asset(_cards[index], fit: BoxFit.cover),
+                      );
+                    },
                   ),
                 ),
               ],
