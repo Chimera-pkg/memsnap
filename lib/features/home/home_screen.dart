@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_gamification/providers/language_provider.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +6,8 @@ import 'package:learning_gamification/features/shop/shop_screen.dart';
 import 'package:learning_gamification/features/daily_gift/daily_gift_screen.dart';
 import 'package:learning_gamification/features/learning/learning_mode_screen.dart';
 import 'package:learning_gamification/shared/widgets/pressable_icon.dart';
+import 'package:learning_gamification/shared/widgets/appbar_widget.dart';
+import 'package:learning_gamification/providers/audio_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,45 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Gunakan instance terpisah untuk musik latar agar tidak terinterupsi suara klik
-  late AudioPlayer _bgMusicPlayer;
-  late AudioPlayer _sfxPlayer;
-  bool _isMusicPlaying = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _bgMusicPlayer = AudioPlayer();
-    _sfxPlayer = AudioPlayer();
-
-    _startBackgroundMusic();
-  }
-
-  Future<void> _startBackgroundMusic() async {
-    try {
-      // Set agar musik berputar terus menerus (looping)
-      await _bgMusicPlayer.setReleaseMode(ReleaseMode.loop);
-      await _bgMusicPlayer.play(AssetSource('audio/mainmusic.wav'));
-    } catch (e) {
-      debugPrint("Error play background music: $e");
-    }
-  }
-
-  void _playSfx(String path) {
-    _sfxPlayer.play(AssetSource(path));
-  }
-
-  @override
-  void dispose() {
-    // Bersihkan resource saat widget dihancurkan
-    _bgMusicPlayer.dispose();
-    _sfxPlayer.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final gemProvider = context.watch<GemProvider>();
     final langProvider = context.watch<LanguageProvider>();
 
     final Size screenSize = MediaQuery.of(context).size;
@@ -82,129 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        PressableIcon(
-                          onTap: () async {
-                            _playSfx('audio/click.mp3');
-                            if (_isMusicPlaying) {
-                              _bgMusicPlayer.pause();
-                            }
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const ShopScreen(),
-                              ),
-                            );
-                            if (_isMusicPlaying) {
-                              _bgMusicPlayer.resume();
-                            }
-                          },
-                          assetPath: 'assets/diamondbank.png',
-                          baseSize: headerIconSize,
-                        ),
-                        Text(
-                          '${gemProvider.balance}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: (headerIconSize * 0.2).clamp(12.0, 16.0),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    PressableIcon(
-                      onTap: () {
-                        _playSfx('audio/click.mp3');
-                        showDialog(
-                          context: context,
-                          barrierColor: Colors.white.withOpacity(0.2),
-                          builder: (_) => AlertDialog(
-                            contentPadding: EdgeInsets.zero,
-                            content: Image.asset(
-                              'assets/help_c.png',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        );
-                      },
-                      assetPath: 'assets/help.png',
-                      baseSize: headerIconSize,
-                    ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () {
-                        _playSfx('audio/click.mp3');
-                        showDialog(
-                          context: context,
-                          useSafeArea: true,
-                          barrierColor: Colors.white.withValues(alpha: 0.2),
-                          builder: (_) => Dialog(
-                            alignment: Alignment.topRight,
-                            backgroundColor: Colors.transparent,
-                            insetPadding: const EdgeInsets.only(top: 100),
-                            constraints: const BoxConstraints(
-                              maxWidth: 200,
-                              maxHeight: 300,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    if (_isMusicPlaying) {
-                                      _bgMusicPlayer.pause();
-                                    } else {
-                                      _bgMusicPlayer.resume();
-                                    }
-                                    setState(() {
-                                      _isMusicPlaying = !_isMusicPlaying;
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                  child: Image.asset(
-                                    _isMusicPlaying
-                                        ? 'assets/music_off.png'
-                                        : 'assets/music_on.png',
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: 50,
-                                  ),
-                                ),
-                                // GestureDetector(
-                                //   onTap: () {
-                                //     if (_isMusicPlaying) {
-                                //       _bgMusicPlayer.pause();
-                                //     } else {
-                                //       _bgMusicPlayer.resume();
-                                //     }
-                                //     setState(() {
-                                //       _isMusicPlaying = !_isMusicPlaying;
-                                //     });
-                                //     Navigator.pop(context);
-                                //   },
-                                //   child: Image.asset(
-                                //     _isMusicPlaying
-                                //         ? 'assets/sound_off.png'
-                                //         : 'assets/sound_on.png',
-                                //     fit: BoxFit.cover,
-                                //     width: double.infinity,
-                                //     height: 50,
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Icon(Icons.menu, color: Colors.white),
-                    ),
-                  ],
-                ),
+                const AppbarWidget(showHelpIcon: true),
 
                 // SizedBox(height: screenSize.height * 0.01),
 
@@ -216,18 +58,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       offset: const Offset(0, 15),
                       child: PressableIcon(
                         onTap: () async {
-                          _playSfx('audio/click.mp3');
-                          if (_isMusicPlaying) {
-                            _bgMusicPlayer.pause();
-                          }
+                          context.read<AudioProvider>().playSfx(
+                            'audio/click.mp3',
+                          );
+                          context.read<AudioProvider>().pauseMusic();
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => const ShopScreen(),
                             ),
                           );
-                          if (_isMusicPlaying) {
-                            _bgMusicPlayer.resume();
+                          if (context.mounted) {
+                            context.read<AudioProvider>().resumeMusic();
                           }
                         },
                         assetPath: 'assets/shop.png',
@@ -239,7 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       offset: const Offset(13, -25),
                       child: PressableIcon(
                         onTap: () {
-                          _playSfx('audio/click.mp3');
+                          context.read<AudioProvider>().playSfx(
+                            'audio/click.mp3',
+                          );
                           _showLanguageDialog(langProvider);
                         },
                         assetPath: 'assets/language2.png',
@@ -251,7 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       offset: const Offset(12, 15),
                       child: PressableIcon(
                         onTap: () {
-                          _playSfx('audio/click.mp3');
+                          context.read<AudioProvider>().playSfx(
+                            'audio/click.mp3',
+                          );
                           final claimFuture = context
                               .read<GemProvider>()
                               .claimDailyIfEligible();
@@ -288,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Center(
                   child: PressableIcon(
                     onTap: () {
-                      _playSfx('audio/click.mp3');
+                      context.read<AudioProvider>().playSfx('audio/click.mp3');
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -323,7 +169,9 @@ class _HomeScreenState extends State<HomeScreen> {
             children: ['Spanish', 'French', 'Chinese'].map((lang) {
               return GestureDetector(
                 onTap: () {
-                  _playSfx('audio/changelanguage.mp3');
+                  context.read<AudioProvider>().playSfx(
+                    'audio/changelanguage.mp3',
+                  );
                   langProvider.setSelectedLanguage(context, lang);
                   Navigator.pop(context);
                 },

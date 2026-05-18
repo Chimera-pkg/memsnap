@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learning_gamification/providers/audio_provider.dart';
 import 'package:learning_gamification/providers/language_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:learning_gamification/providers/gem_provider.dart';
@@ -17,6 +18,7 @@ Future<void> main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => GemProvider()),
           ChangeNotifierProvider(create: (_) => LanguageProvider()),
+          ChangeNotifierProvider(create: (_) => AudioProvider()),
         ],
         child: const MyApp(),
       ),
